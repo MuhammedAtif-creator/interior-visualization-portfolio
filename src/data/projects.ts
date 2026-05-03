@@ -113,23 +113,5 @@ export const projects: Project[] = [
       deliverables: ['Detailed Zoning Plans', 'Flow Analysis Diagrams'],
       workflow: 'Client Requirement Matrix → Zoning → Circulation Optimization'
     }
-  },
-  {
-    id: '7',
-    title: 'PATHANAMTHITTA Residence',
-    category: ['Residential', 'Space Planning'],
-    location: 'Kerala, India',
-    year: 2021,
-    shortDescription: 'Advanced spatial layout design for a contemporary residential project.',
-    image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000&auto=format&fit=crop',
-    status: 'Completed',
-    details: {
-      overview: 'Maximizing the functional potential of a mid-sized footprint through intellectual layout design.',
-      scope: ['Layout Planning', 'Furniture Strategy'],
-      designStyle: 'Contemporary Regional',
-      materials: ['NA'],
-      software: ['AutoCAD'],
-      deliverables: ['Final Floor Plan', 'Spatial Allocation Spec']
-    }
   }
 ];
