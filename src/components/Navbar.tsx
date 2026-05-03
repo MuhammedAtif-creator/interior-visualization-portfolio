@@ -25,24 +25,26 @@ export default function Navbar() {
 
   return (
     <nav 
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-700 ${
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-700 px-6 md:px-12 ${
         isScrolled 
-          ? 'py-4 bg-white/10 backdrop-blur-xl border-b border-white/10 shadow-lg' 
-          : 'py-8 bg-transparent'
+          ? 'py-4 mt-0' 
+          : 'py-8 mt-4'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center text-charcoal">
+      <div className={`max-w-7xl mx-auto px-8 md:px-12 flex justify-between items-center transition-all duration-700 rounded-full ${
+        isScrolled ? 'glass-navbar py-3 shadow-2xl' : 'bg-transparent py-0'
+      }`}>
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           className="flex flex-col"
         >
-          <span className="text-xl md:text-2xl font-serif tracking-[0.2em] leading-none uppercase">Muhammed Atif</span>
-          <span className="text-[9px] tracking-[0.1em] md:tracking-[0.3em] font-medium opacity-70 mt-1 ml-0.5 uppercase">Interior Designer & 3D Visualizer</span>
+          <span className="text-lg md:text-xl font-serif tracking-[0.2em] leading-none uppercase text-white">Muhammed Atif</span>
+          <span className="text-[7px] md:text-[8px] tracking-[0.4em] font-bold text-accent-orange mt-1 uppercase">Interior Specialist</span>
         </motion.div>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-12">
+        <div className="hidden md:flex items-center gap-10">
           {navLinks.map((link, idx) => (
             <motion.a 
               key={link.name} 
@@ -50,17 +52,18 @@ export default function Navbar() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
-              className="text-xs uppercase tracking-[0.2em] luxury-underline transition-all hover:text-luxury-gold hover:-translate-y-0.5"
+              className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/70 hover:text-accent-orange transition-all relative group"
             >
               {link.name}
+              <span className="absolute -bottom-1 left-0 w-0 h-[1.5px] bg-accent-orange transition-all duration-300 group-hover:w-full" />
             </motion.a>
           ))}
           <motion.button 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            whileHover={{ scale: 1.05, y: -2 }}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="glass-dark text-ivory px-6 py-3 rounded-[12px] text-xs uppercase tracking-widest hover:bg-luxury-gold transition-all duration-300 shadow-xl shadow-charcoal/20"
+            className="bg-white/5 border border-white/10 text-white px-6 py-2.5 rounded-full text-[10px] uppercase tracking-[0.2em] font-bold hover:bg-accent-orange hover:border-accent-orange transition-all duration-500"
           >
             Start a Project
           </motion.button>
@@ -68,10 +71,10 @@ export default function Navbar() {
 
         {/* Mobile Toggle */}
         <button 
-          className="md:hidden text-charcoal"
+          className="md:hidden text-white p-2 glass-panel rounded-full"
           onClick={() => setIsMobileMenuOpen(true)}
         >
-          <Menu size={24} />
+          <Menu size={20} />
         </button>
       </div>
 
@@ -79,31 +82,38 @@ export default function Navbar() {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div 
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            transition={{ type: 'tween', duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 bg-ivory z-[60] flex flex-col items-center justify-center gap-8"
+            initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+            animate={{ opacity: 1, backdropFilter: 'blur(20px)' }}
+            exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+            className="fixed inset-0 bg-cinematic-black/90 z-[60] flex flex-col items-center justify-center gap-10"
           >
             <button 
-              className="absolute top-8 right-8 text-charcoal"
+              className="absolute top-10 right-10 text-white p-4 glass-panel rounded-full"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <X size={32} />
             </button>
-            {navLinks.map((link) => (
-              <a 
+            {navLinks.map((link, idx) => (
+              <motion.a 
                 key={link.name} 
                 href={link.href} 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-4xl font-serif tracking-widest hover:text-luxury-gold transition-colors"
+                className="text-4xl font-serif tracking-widest text-white hover:text-accent-orange transition-colors"
               >
                 {link.name}
-              </a>
+              </motion.a>
             ))}
-            <button className="mt-8 bg-charcoal text-ivory px-10 py-5 rounded-[14px] text-sm uppercase tracking-widest">
-              Start a Project
-            </button>
+            <motion.button 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="mt-8 bg-accent-orange text-white px-12 py-5 rounded-full text-xs uppercase tracking-widest font-bold shadow-2xl"
+            >
+              Consult Now
+            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>

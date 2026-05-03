@@ -28,7 +28,7 @@ export default function PortfolioSection() {
   }, [selectedCategory, searchQuery]);
 
   return (
-    <section id="portfolio" className="py-32 px-6 md:px-12 bg-ivory">
+    <section id="portfolio" className="py-32 px-6 md:px-12 bg-cinematic-black border-y border-white/5">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-10">
@@ -36,33 +36,33 @@ export default function PortfolioSection() {
             <motion.span 
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="text-[10px] uppercase tracking-[0.5em] text-muted mb-6 block"
+              className="text-[10px] uppercase tracking-[0.5em] text-accent-orange mb-6 block"
             >
-              Selected Works
+              Curated Portfolio
             </motion.span>
             <motion.h2 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-5xl md:text-7xl font-serif leading-tight mb-8"
+              className="text-5xl md:text-7xl font-serif leading-tight mb-8 text-white tracking-tight"
             >
-              Selected Works
+              Selected Works.
             </motion.h2>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-xl font-light text-muted leading-relaxed"
+              className="text-xl font-light text-muted-text leading-relaxed"
             >
-              A curated collection of interior concepts, 3D visualizations, and spatial design work.
+              Focusing strictly on high-end interior concepts, 3D visualizations, and intellectual space planning.
             </motion.p>
           </div>
 
-          <div className="flex items-center gap-2 glass-panel p-2 border border-black/5">
+          <div className="flex items-center gap-2 glass-panel p-2 border border-white/10">
             <button 
               onClick={() => setViewMode('grid')}
               className={`flex items-center gap-2 px-6 py-3 rounded-xl text-[10px] uppercase tracking-widest font-bold transition-all duration-500 ${
-                viewMode === 'grid' ? 'bg-charcoal text-ivory shadow-xl scale-105' : 'text-charcoal/40 hover:bg-stone/20'
+                viewMode === 'grid' ? 'bg-white text-black shadow-xl scale-105' : 'text-white/40 hover:bg-white/5'
               }`}
             >
               <LayoutGrid size={14} /> Grid
@@ -70,7 +70,7 @@ export default function PortfolioSection() {
             <button 
               onClick={() => setViewMode('table')}
               className={`flex items-center gap-2 px-6 py-3 rounded-xl text-[10px] uppercase tracking-widest font-bold transition-all duration-500 ${
-                viewMode === 'table' ? 'bg-charcoal text-ivory shadow-xl scale-105' : 'text-charcoal/40 hover:bg-stone/20'
+                viewMode === 'table' ? 'bg-white text-black shadow-xl scale-105' : 'text-white/40 hover:bg-white/5'
               }`}
             >
               <TableIcon size={14} /> Table
@@ -91,8 +91,8 @@ export default function PortfolioSection() {
               onClick={() => setSelectedCategory(cat)}
               className={`px-6 py-3 rounded-full text-[10px] uppercase tracking-[0.2em] whitespace-nowrap transition-all duration-500 border ${
                 selectedCategory === cat 
-                ? 'bg-luxury-gold border-luxury-gold text-white shadow-lg shadow-luxury-gold/30' 
-                : 'glass-panel border-black/5 text-muted hover:border-luxury-gold hover:text-luxury-gold'
+                ? 'bg-accent-orange border-accent-orange text-white shadow-lg shadow-accent-orange/30' 
+                : 'glass-panel border-white/10 text-muted-text hover:border-accent-orange hover:text-accent-orange'
               }`}
             >
               {cat}
