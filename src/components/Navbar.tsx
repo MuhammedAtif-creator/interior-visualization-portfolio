@@ -1,122 +1,90 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
+import { 
+  Home, 
+  LayoutGrid, 
+  User, 
+  History, 
+  Cpu, 
+  MessageSquare, 
+  Zap 
+} from 'lucide-react';
+
+const navItems = [
+  { id: 'home', label: 'Home' },
+  { id: 'portfolio', label: 'Portfolio' },
+  { id: 'about', label: 'About' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'hire-me', label: 'Hire Me' },
+  { id: 'contact', label: 'Contact' },
+];
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      const sections = navItems.map(item => item.id);
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          if (rect.top <= 100 && rect.bottom >= 100) {
+            setActiveSection(section);
+            break;
+          }
+        }
+      }
     };
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
-    { name: 'Home', href: '#' },
-    { name: 'Portfolio', href: '#portfolio' },
-    { name: 'Services', href: '#services' },
-    { name: 'About', href: '#about' },
-    { name: 'Experience', href: '#experience' },
-    { name: 'Contact', href: '#contact' },
-  ];
-
   return (
-    <nav 
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-700 px-6 md:px-12 ${
-        isScrolled 
-          ? 'py-4 mt-0' 
-          : 'py-8 mt-4'
-      }`}
-    >
-      <div className={`max-w-7xl mx-auto px-8 md:px-12 flex justify-between items-center transition-all duration-700 rounded-full ${
-        isScrolled ? 'glass-navbar py-3 shadow-2xl' : 'bg-transparent py-0'
-      }`}>
+    <>
+      {/* Desktop Top Navigation */}
+      <nav className="fixed top-0 left-0 w-full z-[100] px-6 lg:px-24 h-24 flex items-center justify-between pointer-events-none">
         <motion.div 
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="flex flex-col"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-primary-text font-serif text-2xl tracking-tighter pointer-events-auto cursor-pointer"
         >
-          <span className="text-lg md:text-xl font-serif tracking-[0.2em] leading-none uppercase text-white">Muhammed Atif</span>
-          <span className="text-[7px] md:text-[8px] tracking-[0.4em] font-bold text-accent-orange mt-1 uppercase">Interior Specialist</span>
+          M.A
         </motion.div>
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-10">
-          {navLinks.map((link, idx) => (
-            <motion.a 
-              key={link.name} 
-              href={link.href}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
-              className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/70 hover:text-accent-orange transition-all relative group"
+        <div className="hidden lg:flex items-center gap-12 pointer-events-auto">
+          {navItems.map((item) => (
+            <a
+              key={item.id}
+              href={`#${item.id}`}
+              className={`relative py-2 text-[10px] uppercase tracking-[0.3em] font-medium transition-all duration-500 overflow-hidden group ${
+                activeSection === item.id ? 'text-accent' : 'text-secondary-text hover:text-primary-text'
+              }`}
             >
-              {link.name}
-              <span className="absolute -bottom-1 left-0 w-0 h-[1.5px] bg-accent-orange transition-all duration-300 group-hover:w-full" />
-            </motion.a>
+              {item.label}
+              <span className={`absolute bottom-0 left-0 w-full h-[1px] bg-accent transform transition-transform duration-500 origin-left ${
+                activeSection === item.id ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+              }`} />
+            </a>
           ))}
-          <motion.button 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-white/5 border border-white/10 text-white px-6 py-2.5 rounded-full text-[10px] uppercase tracking-[0.2em] font-bold hover:bg-accent-orange hover:border-accent-orange transition-all duration-500"
-          >
-            Start a Project
-          </motion.button>
         </div>
+      </nav>
 
-        {/* Mobile Toggle */}
-        <button 
-          className="md:hidden text-white p-2 glass-panel rounded-full"
-          onClick={() => setIsMobileMenuOpen(true)}
-        >
-          <Menu size={20} />
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-            animate={{ opacity: 1, backdropFilter: 'blur(20px)' }}
-            exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-            className="fixed inset-0 bg-cinematic-black/90 z-[60] flex flex-col items-center justify-center gap-10"
+      {/* Mobile Bottom Dock */}
+      <nav className="lg:hidden fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-2 p-2 bg-main-bg/80 backdrop-blur-xl border border-divider rounded-full">
+        {navItems.map((item) => (
+          <a
+            key={item.id}
+            href={`#${item.id}`}
+            className={`px-4 py-2 text-[8px] uppercase tracking-widest font-bold rounded-full transition-colors ${
+              activeSection === item.id ? 'bg-accent text-main-bg' : 'text-secondary-text'
+            }`}
           >
-            <button 
-              className="absolute top-10 right-10 text-white p-4 glass-panel rounded-full"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <X size={32} />
-            </button>
-            {navLinks.map((link, idx) => (
-              <motion.a 
-                key={link.name} 
-                href={link.href} 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-4xl font-serif tracking-widest text-white hover:text-accent-orange transition-colors"
-              >
-                {link.name}
-              </motion.a>
-            ))}
-            <motion.button 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="mt-8 bg-accent-orange text-white px-12 py-5 rounded-full text-xs uppercase tracking-widest font-bold shadow-2xl"
-            >
-              Consult Now
-            </motion.button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </nav>
+            {item.label}
+          </a>
+        ))}
+      </nav>
+    </>
   );
 }

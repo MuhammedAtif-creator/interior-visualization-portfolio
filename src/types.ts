@@ -1,14 +1,28 @@
-export type ProjectCategory = 'Residential' | 'Commercial' | 'Villa' | 'Apartment' | '3D Visualization' | 'Furniture Sourcing' | 'Living Rooms' | 'Bedrooms' | 'Space Planning';
+export type ProjectCategory = 
+  | 'All' 
+  | 'Residential' 
+  | 'Residential Villa'
+  | 'Luxury Residential Villa'
+  | 'Luxury Residential'
+  | 'Luxury Residential Apartment'
+  | 'Commercial' 
+  | 'Commercial Interior'
+  | '3D Visualization' 
+  | 'Space Planning' 
+  | 'Interior Design'
+  | 'Residential Layout'
+  | 'Commercial / Concept';
 
 export interface ProjectDetail {
   overview: string;
   scope: string[];
-  designStyle: string;
+  designStyle?: string;
   materials: string[];
   software: string[];
-  deliverables: string[];
+  deliverables?: string[];
   workflow?: string;
-  output?: string;
+  contribution?: string;
+  approach?: string;
 }
 
 export interface Project {
@@ -17,9 +31,10 @@ export interface Project {
   category: ProjectCategory[];
   location: string;
   year: number;
+  description?: string;
   shortDescription: string;
   image: string;
-  gallery?: string[];
+  images: string[]; // Exactly 6 images
   status: 'Completed' | 'In Progress';
   details: ProjectDetail;
 }

@@ -1,178 +1,140 @@
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, MapPin, Calendar, CheckCircle2, ArrowRight } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Minus, ArrowUpRight } from 'lucide-react';
 import { Project } from '../../types';
 
 interface ProjectModalProps {
-  project: Project | null;
+  project: Project;
   onClose: () => void;
 }
 
 export default function ProjectModal({ project, onClose }: ProjectModalProps) {
-  if (!project) return null;
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  const nextImage = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setActiveImageIndex((prev) => (prev + 1) % project.images.length);
+  };
+
+  const prevImage = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setActiveImageIndex((prev) => (prev - 1 + project.images.length) % project.images.length);
+  };
 
   return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[200] flex items-center justify-center p-4 lg:p-12 bg-main-bg/95 backdrop-blur-xl"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 50 }}
+        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        className="bg-main-bg w-full h-full max-w-[1800px] border border-divider flex flex-col lg:flex-row relative"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
           onClick={onClose}
-          className="absolute inset-0 bg-charcoal/80 backdrop-blur-md"
-        />
-        
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 30 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9, y: 30 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className="relative w-full max-w-6xl max-h-[95vh] glass-panel bg-black/60 backdrop-blur-3xl overflow-y-auto rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.6)] border border-white/10"
+          className="absolute top-8 right-8 z-50 text-white hover:text-accent transition-colors p-4"
         >
-          <motion.button 
-            whileHover={{ rotate: 90, scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={onClose}
-            className="absolute top-8 right-8 z-50 p-3 glass-dark text-white rounded-full hover:bg-accent-orange transition-all shadow-xl"
-          >
-            <X size={24} />
-          </motion.button>
+          <X size={32} />
+        </button>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2">
-            <div className="h-[400px] lg:h-full min-h-[600px] relative overflow-hidden">
-              <motion.img 
-                initial={{ scale: 1.1 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 1.5, ease: "easeOut" }}
-                src={project.image} 
-                alt={project.title} 
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
+        {/* Left: Immersive Gallery */}
+        <div className="flex-1 relative bg-main-bg overflow-hidden flex flex-col">
+          <div className="flex-1 relative overflow-hidden flex items-center justify-center">
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={activeImageIndex}
+                initial={{ opacity: 0, scale: 1.05 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                src={project.images[activeImageIndex]}
+                alt={project.title}
+                className="w-full h-full object-cover lg:object-contain bg-main-bg"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              <div className="absolute bottom-10 left-10 flex gap-3">
+            </AnimatePresence>
+
+            <button onClick={prevImage} className="absolute left-8 w-16 h-16 flex items-center justify-center text-white hover:text-accent transition-all">
+              <ChevronLeft size={48} strokeWidth={1} />
+            </button>
+            <button onClick={nextImage} className="absolute right-8 w-16 h-16 flex items-center justify-center text-white hover:text-accent transition-all">
+              <ChevronRight size={48} strokeWidth={1} />
+            </button>
+          </div>
+
+          {/* Thumbnail Rail */}
+          <div className="h-32 px-12 pb-12 flex gap-4 overflow-x-auto no-scrollbar items-center">
+            {project.images.map((img, idx) => (
+              <button
+                key={idx}
+                onClick={() => setActiveImageIndex(idx)}
+                className={`flex-shrink-0 h-16 aspect-video overflow-hidden border transition-all duration-500 ${
+                  activeImageIndex === idx ? 'border-accent p-1' : 'border-divider opacity-40 hover:opacity-100'
+                }`}
+              >
+                <img src={img} alt={`Thumb ${idx}`} className="w-full h-full object-cover" />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Right: Architectural Metadata */}
+        <div className="w-full lg:w-[500px] bg-secondary-bg border-l border-divider p-12 overflow-y-auto no-scrollbar flex flex-col justify-between">
+          <div className="space-y-16">
+            <div className="space-y-6">
+              <span className="label-sm text-accent">EXHIBITION_#{project.id}</span>
+              <h2 className="text-5xl editorial-title text-primary-text">{project.title}</h2>
+              <div className="flex flex-wrap gap-3">
                 {project.category.map(cat => (
-                  <span key={cat} className="px-4 py-2 glass-dark text-white text-[9px] uppercase tracking-[0.2em] font-medium rounded-full">
-                    {cat}
-                  </span>
+                  <span key={cat} className="label-sm opacity-60">{cat}</span>
                 ))}
               </div>
             </div>
 
-            <div className="p-10 md:p-16 flex flex-col bg-cinematic-black/40">
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="mb-12"
-              >
-                <div className="flex items-center gap-2 text-accent-orange mb-4">
-                  <span className="w-8 h-[1px] bg-accent-orange/50" />
-                  <span className="text-[10px] uppercase tracking-[0.4em] font-bold">Featured Portfolio Piece</span>
-                </div>
-                <h2 className="text-5xl md:text-6xl font-serif mb-6 leading-tight tracking-tight text-white">{project.title}</h2>
-                <div className="flex flex-wrap gap-8 text-muted-text text-[10px] uppercase tracking-[0.2em]">
-                  <span className="flex items-center gap-3">
-                    <MapPin size={14} className="text-accent-orange" /> {project.location}
-                  </span>
-                  <span className="flex items-center gap-3">
-                    <Calendar size={14} className="text-accent-orange" /> {project.year}
-                  </span>
-                  <span className="flex items-center gap-3">
-                    <CheckCircle2 size={14} className="text-accent-orange" /> {project.status}
-                  </span>
-                </div>
-              </motion.div>
+            <div className="grid grid-cols-2 gap-12 pt-12 border-t border-divider">
+               <div className="space-y-2">
+                 <h4 className="label-sm text-accent">LOCATION</h4>
+                 <p className="text-primary-text text-sm font-light">{project.location}</p>
+               </div>
+               <div className="space-y-2">
+                 <h4 className="label-sm text-accent">COMPLETED</h4>
+                 <p className="text-primary-text text-sm font-light">YEAR_{project.year}</p>
+               </div>
+            </div>
 
-              <div className="space-y-12 flex-grow">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <h4 className="text-[10px] uppercase tracking-[0.4em] font-bold text-accent-orange mb-5">Creative Intent</h4>
-                  <p className="text-muted-text font-light leading-relaxed text-xl mb-6">
-                    {project.details.overview}
-                  </p>
-                </motion.div>
+            <div className="space-y-8">
+               <h4 className="label-sm text-accent">OVERVIEW</h4>
+               <p className="text-secondary-text text-sm lg:text-base font-light leading-relaxed">
+                 {project.details.overview || project.shortDescription}
+               </p>
+            </div>
 
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  className="grid grid-cols-1 md:grid-cols-2 gap-10"
-                >
-                  <div>
-                    <h4 className="text-[10px] uppercase tracking-[0.4em] font-bold text-accent-orange mb-5">Project Core</h4>
-                    <ul className="space-y-3">
-                      {project.details.scope.map((item, i) => (
-                        <li key={i} className="flex items-center gap-4 text-xs font-light text-muted-text uppercase tracking-[0.1em]">
-                          <div className="w-1.5 h-1.5 rounded-full bg-accent-orange/30" /> {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="text-[10px] uppercase tracking-[0.4em] font-bold text-accent-orange mb-5">Technical Logic</h4>
-                    <div className="space-y-6">
-                      <div className="p-4 glass-panel border border-white/5 bg-white/[0.02]">
-                        <span className="text-[8px] uppercase tracking-[0.3em] text-muted-text block mb-2">Advanced Workflow</span>
-                        <p className="text-xs font-medium tracking-wide text-white">{project.details.workflow || 'Custom Design Pipeline'}</p>
-                      </div>
-                      <div className="p-4 glass-panel border border-white/5 bg-white/[0.02]">
-                        <span className="text-[8px] uppercase tracking-[0.3em] text-muted-text block mb-2">Visual Benchmark</span>
-                        <p className="text-xs font-medium tracking-wide text-white">{project.details.output || 'High-Fidelity Renders'}</p>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                  className="grid grid-cols-1 md:grid-cols-2 gap-10"
-                >
-                  <div>
-                    <h4 className="text-[10px] uppercase tracking-[0.4em] font-bold text-accent-orange mb-5">Material Palette</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {project.details.materials.map((m, i) => (
-                        <span key={i} className="px-4 py-2 glass-panel border border-white/10 text-[10px] uppercase tracking-widest rounded-lg text-white/70">
-                          {m}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <h4 className="text-[10px] uppercase tracking-[0.4em] font-bold text-accent-orange mb-5">Final Execution</h4>
-                    <div className="flex flex-wrap gap-4">
-                      {project.details.deliverables.map((d, i) => (
-                        <span key={i} className="text-xs font-light text-muted-text flex items-center gap-3">
-                          <ArrowRight size={14} className="text-accent-orange" /> {d}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
-
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
-                className="mt-16 pt-12 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-8"
-              >
-                <button className="w-full sm:w-auto bg-white text-black px-12 py-5 rounded-[12px] text-xs uppercase tracking-[0.3em] font-bold hover:bg-accent-orange hover:text-white transition-all duration-500 shadow-2xl">
-                  Consult for Similar Project
-                </button>
-                <div className="flex flex-col items-end">
-                  <span className="text-[9px] uppercase tracking-[0.3em] text-muted-text font-bold mb-1">Portfolio Reference</span>
-                  <span className="text-xs font-serif italic text-accent-orange">MA-VIZ-{project.id}0{project.year}</span>
-                </div>
-              </motion.div>
+            <div className="space-y-8">
+               <h4 className="label-sm text-accent">SOFTWARE STACK</h4>
+               <div className="flex flex-wrap gap-3">
+                  {project.details.software.map(sw => (
+                    <span key={sw} className="px-4 py-2 border border-divider text-[10px] uppercase tracking-widest text-primary-text">{sw}</span>
+                  ))}
+               </div>
             </div>
           </div>
-        </motion.div>
-      </div>
-    </AnimatePresence>
+
+          <motion.a 
+            href="#contact"
+            onClick={onClose}
+            className="mt-16 w-full py-8 border border-accent text-accent uppercase tracking-[0.3em] text-[10px] font-bold hover:bg-accent hover:text-main-bg transition-all duration-500 flex items-center justify-center gap-4 group"
+          >
+            Request Similar Experience
+            <ArrowUpRight size={14} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+          </motion.a>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }
